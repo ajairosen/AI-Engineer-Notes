@@ -242,3 +242,85 @@ def two_sum(nums, target):
 print(two_sum([2, 7, 11, 15], 9))    # [0, 1]
 ```
 - **Approach:** single pass with a value→index hash map, checking for the complement before inserting the current number. O(n) time, O(n) space — the classic improvement over the O(n²) brute-force pair check.
+
+## Q14: Longest substring without repeating characters
+
+Given a string, find the length of the longest substring without repeating characters.
+
+**Answer:**
+```python
+def longest_unique_substring(s):
+    longest = 0
+    l = 0
+    seen = set()
+    for r in range(len(s)):
+        while s[r] in seen:
+            seen.remove(s[l])
+            l += 1
+        w = (r - l) + 1
+        longest = max(longest, w)
+        seen.add(s[r])
+    return longest
+
+print(longest_unique_substring("abcabcbb"))    # 3  ("abc")
+print(longest_unique_substring("bbbbb"))       # 1  ("b")
+print(longest_unique_substring("pwwkew"))      # 3  ("wke")
+print(longest_unique_substring(""))            # 0
+print(longest_unique_substring("abcdab"))      # 4  ("cdab")
+```
+- **Approach:** sliding window with two pointers (`l`, `r`) and a `seen` set. `r` expands the window; whenever `s[r]` is already in the window, shrink from the left (evicting from `seen`, advancing `l`) until the duplicate is gone. O(n) time — each character enters and leaves `seen` at most once — O(k) space where k is the window's character-set size.
+
+## Q15: Check if one string is a rotation of another
+
+**Answer:**
+```python
+def is_rotation(s1, s2):
+    if len(s1) != len(s2):
+        return False
+    return s2 in (s1 + s1)
+
+print(is_rotation("waterbottle", "erbottlewat"))   # True
+print(is_rotation("hello", "llohe"))               # True
+print(is_rotation("hello", "helol"))               # False
+print(is_rotation("abc", "abcd"))                  # False
+```
+- **Approach:** concatenating `s1` with itself contains every rotation of `s1` as a substring — check membership after a length guard. O(n) time, O(n) space (for `s1+s1`). A brute-force alternative checks each of the n rotations individually — O(n²) time, more code but no trick to remember.
+
+## Q16: `@memoize` decorator
+
+Write a decorator `@memoize` that caches a function's return value based on its arguments, so repeated calls with the same args skip recomputation. Test it on a recursive Fibonacci function.
+
+**Answer:**
+```python
+from functools import wraps
+import time
+
+def memoize(func):
+    cache = {}
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        key = (args, tuple(sorted(kwargs.items())))
+        if key not in cache:
+            cache[key] = func(*args, **kwargs)
+        return cache[key]
+    wrapper.cache = cache
+    return wrapper
+
+@memoize
+def fib(n):
+    if n < 2:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+start = time.perf_counter()
+print(fib(30))                                    # 832040
+print(f"time: {time.perf_counter() - start:.6f}s")
+
+print("cache size:", len(fib.cache))               # 31 (n = 0..30)
+
+start = time.perf_counter()
+print(fib(30))                                     # 832040, served from cache
+print(f"second call time: {time.perf_counter() - start:.8f}s")
+```
+- **Approach:** the wrapper builds a key from `(args, sorted kwargs)` and only calls the real function on a cache miss — turns naive exponential recursion (see basic.md Q11) into O(n) by never recomputing a given `n` twice. Space: O(n) for the cache.
+- **Common bugs to watch for:** decorate with `@wraps(func)` directly if you did `from functools import wraps` — writing `@functools.wraps(func)` without importing `functools` itself raises `NameError`. Also, even with memoization, don't warm up with something like `fib(1000)`: the *first* call still has to recurse all the way down to the base case before anything is cached, so it hits Python's default recursion limit (1000) and raises `RecursionError` — memoization speeds up repeated calls, it doesn't remove the initial stack depth.

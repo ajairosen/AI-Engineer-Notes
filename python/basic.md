@@ -159,7 +159,20 @@ fibonacci(10)
 ```
 - **Approach:** iterative with tuple unpacking, O(n) time, O(1) space — no recursion/memoization needed for a plain sequence print.
 
-## Q11: Group words by length
+## Q11: Nth Fibonacci number (recursive)
+
+**Answer:**
+```python
+def fib(n):
+    if n < 2:
+        return n
+    return fib(n - 1) + fib(n - 2)
+
+print(fib(4))    # 3
+```
+- **Approach:** naive recursion, each call branches into two more until it hits the base case. O(2^n) time — exponential, since the same sub-calls (e.g. `fib(2)`) get recomputed many times — O(n) space for the call stack. A `@memoize`/`functools.lru_cache` decorator fixes the recomputation by caching results per argument, bringing it down to O(n).
+
+## Q12: Group words by length
 
 **Answer:**
 ```python
@@ -177,7 +190,7 @@ print(group_by_length(["cat", "dog", "apple", "hi", "bat"]))
 ```
 - **Approach:** dict keyed by length, `setdefault(lenn, []).append(word)` is the one-line equivalent worth mentioning. O(n) time.
 
-## Q12: Intersection of two lists
+## Q13: Intersection of two lists
 
 **Answer:**
 ```python
@@ -190,7 +203,7 @@ print(intersection([1, 2, 3], [3, 2, 1]))       # [1, 2, 3] (order not guarantee
 ```
 - **Approach:** set intersection. O(n + m) time, but drops duplicates and doesn't preserve input order — mention this tradeoff if order matters.
 
-## Q13: Count duplicate elements
+## Q14: Count duplicate elements
 
 Return a dict of element → count, only for elements that appear more than once.
 
@@ -211,7 +224,7 @@ print(duplicate_counts([1, 2, 2, 3, 3, 3, 4]))
 ```
 - **Approach:** count first, filter second. O(n) time, O(n) space.
 
-## Q14: Remove duplicates while preserving order
+## Q15: Remove duplicates while preserving order
 
 **Answer:**
 ```python
