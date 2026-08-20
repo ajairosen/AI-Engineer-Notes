@@ -324,3 +324,36 @@ print(f"second call time: {time.perf_counter() - start:.8f}s")
 ```
 - **Approach:** the wrapper builds a key from `(args, sorted kwargs)` and only calls the real function on a cache miss — turns naive exponential recursion (see basic.md Q11) into O(n) by never recomputing a given `n` twice. Space: O(n) for the cache.
 - **Common bugs to watch for:** decorate with `@wraps(func)` directly if you did `from functools import wraps` — writing `@functools.wraps(func)` without importing `functools` itself raises `NameError`. Also, even with memoization, don't warm up with something like `fib(1000)`: the *first* call still has to recurse all the way down to the base case before anything is cached, so it hits Python's default recursion limit (1000) and raises `RecursionError` — memoization speeds up repeated calls, it doesn't remove the initial stack depth.
+
+## Q17: Valid (balanced) parentheses
+
+Given a string containing just `(`, `)`, `{`, `}`, `[`, `]`, determine if the brackets are validly matched/balanced.
+
+**Answer:**
+```python
+def is_balanced(s):
+    stack = []
+    pairs = {
+        "}": "{",
+        "]": "[",
+        ")": "("
+    }
+    for ch in s:
+        if ch in "{[(":
+            stack.append(ch)
+        elif ch in "}])":
+            if not stack:
+                return False
+            top = stack.pop()
+            if top != pairs[ch]:
+                return False
+    return len(stack) == 0
+
+print(is_balanced("()"))            # True
+print(is_balanced("([{}])"))        # True
+print(is_balanced("(]"))            # False
+print(is_balanced("([)]"))          # False
+print(is_balanced("((("))           # False
+print(is_balanced(""))              # True
+```
+- **Approach:** stack-based matching. Push every opener. On a closer, either the stack is empty (unmatched closer, e.g. leading `)`) or the popped top isn't its expected opener (wrong type or interleaved brackets, e.g. `([)]`) — both return `False` immediately. After the loop, `len(stack) == 0` catches unclosed openers (e.g. `"((("`). O(n) time, O(n) space (worst case: all openers).

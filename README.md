@@ -3,7 +3,7 @@
 Q&A bank built up interactively, one question at a time, organized by category.
 
 ## Categories
-- Python — split by complexity: [basic.md](python/basic.md), [intermediate.md](python/intermediate.md), [advanced.md](python/advanced.md)
+- Python — split by complexity: [basic.md](python/basic.md), [intermediate.md](python/intermediate.md), [advanced.md](python/advanced.md), plus [theory.md](python/theory.md) for theoretical/situational (non-coding) questions
 - [rag/questions.md](rag/questions.md) — Retrieval-Augmented Generation
 - [agents-langgraph/questions.md](agents-langgraph/questions.md) — Agents & LangGraph
 - [production/questions.md](production/questions.md) — Production concerns (agent failure, hallucination, monitoring, etc.)
