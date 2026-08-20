@@ -13,3 +13,35 @@ In LangGraph, what's the difference between a graph's "state" and a "checkpoint,
   - **Time travel / debugging:** you can replay from any past checkpoint to see how state evolved, or branch from an earlier point.
   - **Multi-turn conversations:** checkpoints tied to a `thread_id` let you maintain separate persistent conversation histories per user/session.
 
+## Q2: LangChain vs. LangGraph
+
+What's the difference between LangChain and LangGraph, and when would you reach for one over the other?
+
+**Answer:**
+- **LangChain** is a toolkit for building LLM apps — prompts, chains, retrievers, memory, integrations. Best suited for linear/sequential flows: prompt → LLM → parse → output.
+- **LangGraph** is built on top of LangChain for stateful, cyclic workflows. It models the app as a graph of nodes (agents/functions) connected by edges, with explicit shared state passed between them. This enables loops, conditional branching, retries, and human-in-the-loop steps — things linear chains can't handle well.
+- **Quick way to remember:** LangChain = building blocks. LangGraph = orchestrator that lets those blocks loop, branch, and make decisions like a real agent.
+
+## Q3: LangGraph / agentic application — latency optimization
+
+How would you reduce latency in a LangGraph-based agentic application? (See also [system-design/questions.md](../system-design/questions.md) Q1 for the narrower RAG-chat-specific version of this question.)
+
+**Answer:**
+
+1. **Async & parallel execution** — use async for I/O-bound tasks (LLM, DB, vector DB, API calls) so they don't block execution, and run independent agents/components concurrently instead of sequentially to reduce critical-path latency.
+2. **Caching** — cache expensive/repeated operations: embeddings, retrieval results, LLM responses, API calls.
+3. **Checkpointing** — persist workflow state so a failed long-running workflow can resume from the last checkpoint instead of restarting.
+4. **Reduce LLM calls** — avoid unnecessary supervisor/planner calls; use deterministic logic or smaller models for simple decisions.
+5. **Optimize RAG** — tune `top_k`, metadata filtering, chunk size, and reranking; keep retrieved context small and relevant.
+6. **Vector DB indexing** — use approximate nearest-neighbor indexes (HNSW, IVF) for efficient search on large datasets.
+7. **Timeouts & retries** — set timeouts for external calls, retry transient failures with exponential backoff instead of waiting indefinitely.
+8. **Streaming** — stream LLM tokens to improve time-to-first-token (TTFT) and perceived latency.
+9. **Optimize state & prompts** — keep graph state and LLM prompts small, passing only the data required by downstream nodes.
+10. **Monitoring** — measure latency per node, LLM call, and DB/API call to identify the critical path before optimizing.
+
+## Q4: What determines routing complexity in a multi-agent system?
+
+**Answer:**
+
+Routing complexity mainly depends on the number of possible paths, ambiguity of the user intent, dependencies between tasks, and how dynamically the system needs to decide the next action.
+
