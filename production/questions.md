@@ -60,3 +60,17 @@ Walk through some real production challenges you've faced building RAG/agentic L
 5. **Human-in-the-loop / sampling review** — for high-stakes domains, route a sample of responses (or low-confidence ones) to human review before or after delivery, and use that feedback to retrain/improve guardrails.
 6. **Full tracing (LangSmith)** — log the entire pipeline (query → retrieval → context → generation) so any hallucination that slips through can be traced back to see exactly where it went wrong — retrieval failure vs. generation failure.
 
+## Q4: Safe versioning & deployment of a RAG pipeline
+
+How would you safely version and deploy changes to a RAG pipeline in production?
+
+**Answer:**
+
+1. **Version everything** — use Git for code, prompts, retrieval logic, and configuration; use DVC for datasets, evaluation data, and large artifacts.
+2. **Create a new version** — never directly overwrite the existing production pipeline; create a new version for every significant pipeline change.
+3. **Evaluate before deployment** — test the new version on a fixed, versioned evaluation dataset; compare retrieval recall, answer relevance, faithfulness, and latency.
+4. **Handle embedding model changes safely** — create a new vector index and re-embed the documents; keep the old index active until the new index is validated.
+5. **Deploy gradually** — use canary or blue-green deployment instead of sending all traffic immediately; start with a small percentage of users and gradually increase traffic.
+6. **Monitor production metrics** — track quality, latency, error rates, and user feedback after deployment; compare the new version against the existing stable version.
+7. **Enable quick rollback** — if metrics degrade, immediately route traffic back to the previous version; versioning ensures the old code, prompts, data, and configuration are reproducible.
+

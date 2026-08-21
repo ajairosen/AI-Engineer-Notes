@@ -9,6 +9,7 @@ Q&A bank built up interactively, one question at a time, organized by category.
 - [production/questions.md](production/questions.md) — Production concerns (agent failure, hallucination, monitoring, etc.)
 - [system-design/questions.md](system-design/questions.md) — System design basics for AI systems
 - [fine-tuning/questions.md](fine-tuning/questions.md) — LoRA/PEFT and other fine-tuning technique questions
+- [llm-fundamentals/questions.md](llm-fundamentals/questions.md) — Core transformer/LLM architecture concepts
 
 ## Workflow
 - Questions are presented one at a time, shuffled across categories.
