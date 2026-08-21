@@ -49,3 +49,14 @@ Walk through some real production challenges you've faced building RAG/agentic L
    - *Challenge:* When an answer was wrong or slow, it was difficult to identify whether the issue came from the router, agent, retrieval, database, or LLM.
    - *Solution:* Added tracing and logging for each node, prompt/response metadata, retrieval scores, latency, token usage, errors, and retry counts.
 
+## Q3: Detecting and preventing hallucinations from reaching the user
+
+**Answer:**
+
+1. **Faithfulness/groundedness check (post-generation, pre-delivery)** — after the LLM generates a response, run an NLI-based faithfulness check — compare each claim in the response against the retrieved context to verify it's actually supported (entailed) by the source, not fabricated. If unsupported, flag or block the response.
+2. **Citation enforcement** — require the LLM to cite which retrieved chunk supports each claim. If a claim has no citation or the citation doesn't actually support it, treat it as a potential hallucination.
+3. **Confidence/uncertainty scoring** — use the model's output probabilities or a secondary classifier to score confidence. Low-confidence responses get flagged for review or trigger a fallback (e.g., "I don't have enough information").
+4. **RAG evaluation frameworks (offline + continuous monitoring)** — tools like RAGAS or TruLens continuously evaluate metrics like faithfulness, answer relevancy, and context precision/recall — run in CI/CD before deployment and sampled in production for drift detection.
+5. **Human-in-the-loop / sampling review** — for high-stakes domains, route a sample of responses (or low-confidence ones) to human review before or after delivery, and use that feedback to retrain/improve guardrails.
+6. **Full tracing (LangSmith)** — log the entire pipeline (query → retrieval → context → generation) so any hallucination that slips through can be traced back to see exactly where it went wrong — retrieval failure vs. generation failure.
+

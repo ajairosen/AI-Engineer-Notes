@@ -31,3 +31,38 @@ How would you reduce latency in a RAG-based chat system where users complain res
 *Use connection pooling*
 - Reuse database/vector DB connections instead of creating a new connection for every request.
 
+## Q2: Handling a traffic spike into a RAG/agentic system
+
+How would you design the request path to survive a sudden traffic spike into a RAG/agent-backed API?
+
+**Answer:**
+
+```
+                      TRAFFIC SPIKE
+                            ↓
+        Users ───────→ [Load Balancer]
+                            ↓
+                     [Rate Limiter]
+                    /              \
+               Allowed            Too many
+                  ↓                 ↓
+            [API Servers]        HTTP 429
+                  ↓
+               [Cache]
+              /       \
+           HIT         MISS
+            ↓           ↓
+        Response   [Queue / Concurrency Limit]
+                          ↓
+                    [RAG / Agent]
+                          ↓
+                [LLM / Vector DB / Tools]
+```
+
+*Simple understanding*
+- **Rate limiter** — stops one user/client from sending too many requests.
+- **Load balancer** — distributes a traffic spike across multiple API servers.
+- **Cache** — avoids repeating expensive work for similar/repeated queries.
+- **Queue + concurrency limit** — prevents 1,000 requests from simultaneously calling the LLM.
+- **Workers/agent** — process only a controlled number of requests at a time.
+

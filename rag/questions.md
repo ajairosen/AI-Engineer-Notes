@@ -77,3 +77,31 @@ What is Reciprocal Rank Fusion, and why is it used in hybrid search?
   where `rank` is its position in each individual ranked list, and `k` is a constant (commonly 60) that controls how much weight lower-ranked results get. Scores from both lists are summed per document, then re-sorted.
 - **Why it's used:** simple, doesn't need score normalization or tuning of weights between dense/sparse, and works well even when the two retrieval methods have very different score distributions.
 
+## Q5: Cross-encoder reranker vs. initial retrieval
+
+What is a cross-encoder reranker, and how is it different from the initial retrieval step?
+
+**Answer:**
+- **Initial retrieval (bi-encoder):** query and documents are encoded **separately** into embeddings, then compared using cosine similarity (or dot product). Fast, because document embeddings are precomputed and indexed (e.g., HNSW in Qdrant) — only the query needs embedding at search time, then a nearest-neighbor lookup. Accuracy is limited since query and document never directly interact.
+- **Cross-encoder reranker:** takes the query and **each candidate document together** as a single input, and the model jointly attends over both to produce a relevance score. Captures much finer-grained semantic interaction between query and document, so it's far more accurate.
+- **Trade-off:** cross-encoders are much slower (can't precompute embeddings, must run inference per query-document pair), so they're **not used for initial retrieval** over millions of documents. Typical pipeline:
+  1. Bi-encoder (+ BM25 for hybrid) retrieves top-k candidates (e.g., top 50) fast.
+  2. Cross-encoder reranks just those top-k candidates to get a more accurate final top-n (e.g., top 5) to pass to the LLM.
+- This two-stage approach balances speed (broad retrieval) with accuracy (precise reranking).
+
+## Q6: Exact vs. semantic caching for LLM queries — and the staleness problem
+
+**Answer:**
+1. **Exact cache**
+   - Stores response keyed to the exact input string. Cache hit only if the new query is character-for-character identical to a past query. Very limited — rarely triggers since users phrase things differently.
+2. **Semantic cache**
+   - Stores past query embeddings + their responses. New query is embedded and compared (cosine similarity) to cached queries. If similarity crosses a threshold, the cached response is returned without calling the LLM — even if wording differs but meaning is the same.
+   - **Drawbacks:**
+     - Caches based on query *meaning only*, ignoring conversation/session state — so it can return **stale answers** when underlying facts change (e.g., a user updates their name, but the cache still returns the old answer since "what's my name" looks the same).
+     - Wrong similarity threshold causes bad hits — too loose returns wrong answers for similar-but-different questions; too strict gives few cache hits, reducing usefulness.
+     - Not safe for personalized/stateful queries by default.
+   - **Fix:**
+     - **Context-aware cache key** — key = query embedding + conversation/session state hash, not query alone. A state change → different key → cache miss → fresh LLM call.
+     - **Per-user/per-session scoping** — separate cache buckets per user so there's no cross-user leakage.
+     - **Cache invalidation** — actively clear cached entries tied to a user when relevant facts/memory update, forcing a fresh call even if the key would've matched.
+

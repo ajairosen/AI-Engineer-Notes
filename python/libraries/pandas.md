@@ -80,3 +80,25 @@ orders['is_completed'] = orders['status'] == 'completed'
 - **Approach:** `==` on a Series is a vectorized element-wise comparison — broadcasts across the whole column and returns a proper boolean Series directly, no loop or `.apply()` needed. This is about as fast as pandas comparisons get.
 - **Common mistake:** `orders['status'].apply(lambda x: True if x == 'completed' else x)` has two problems — it uses `.apply()` (a Python-level loop) when a vectorized comparison would do, *and* the `else x` branch returns the original string instead of `False`, producing a mixed-type column (`True`/`"cancelled"`/`"pending"`) instead of a real boolean one. Always define both branches of a boolean condition explicitly.
 
+## Q6: Per-group percentage, keeping original row shape
+
+Given a DataFrame of employees with `department` and `salary`, add a column `salary_pct_of_dept` showing each employee's salary as a percentage of their department's total salary.
+
+```python
+employees = pd.DataFrame({
+    "name":       ["Alice", "Bob", "Carol", "Dave", "Eve"],
+    "department": ["eng", "eng", "sales", "sales", "eng"],
+    "salary":     [100, 150, 80, 120, 50]
+})
+```
+
+**Answer:**
+```python
+employees['salary_pct_of_dept'] = (
+    employees['salary'] / employees.groupby('department')['salary'].transform('sum') * 100
+)
+```
+Result: Alice 33.33%, Bob 50%, Carol 40%, Dave 60%, Eve 16.67% (eng total=300, sales total=200).
+
+- **Approach:** `.groupby(...).transform('sum')` computes the per-group total but **broadcasts it back to every original row** (shape stays `(5,)`), unlike a plain `.groupby(...).sum()` which collapses to one row per group. `.transform()` is the right tool whenever you need a per-group aggregate lined up against the original, un-collapsed DataFrame so it can be assigned as a new column directly.
+
