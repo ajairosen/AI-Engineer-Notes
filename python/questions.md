@@ -5,3 +5,4 @@ Split by complexity — see:
 - [intermediate.md](intermediate.md)
 - [advanced.md](advanced.md)
 - [theory.md](theory.md) — theoretical & situational (concept/gotcha/predict-the-output questions, not coding problems)
+- [libraries/](libraries/) — topic-wise library FAQs: [pandas.md](libraries/pandas.md), [numpy.md](libraries/numpy.md)

@@ -45,3 +45,12 @@ How would you reduce latency in a LangGraph-based agentic application? (See also
 
 Routing complexity mainly depends on the number of possible paths, ambiguity of the user intent, dependencies between tasks, and how dynamically the system needs to decide the next action.
 
+## Q5: ReAct vs. Plan-and-Execute
+
+What's the difference between the ReAct agent pattern and the Plan-and-Execute pattern?
+
+**Answer:**
+- **ReAct (Reason + Act):** the agent interleaves reasoning and action in a loop — think, take one action, observe result, think again, take next action. Reactive — decides the next step only after seeing the previous result. Good for dynamic tasks where each step depends on prior output, but can be slower (many LLM calls) and less predictable.
+- **Plan-and-Execute:** the agent first generates a full multi-step plan upfront, then executes each step (optionally re-planning if a step fails or new info emerges). Fewer LLM calls for planning, more predictable structure, easier to parallelize steps, but less adaptive to unexpected mid-task changes compared to ReAct.
+- **Quick way to remember:** ReAct = think-as-you-go. Plan-and-Execute = plan first, then act.
+

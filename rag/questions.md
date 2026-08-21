@@ -62,3 +62,18 @@ How would you optimize a RAG pipeline for both accuracy and latency at the same 
     - Create representative questions and test different `chunk_size`, `top_k`, overlap, reranking thresholds, etc.
     - Compare Recall@K, Precision@K, answer relevance/faithfulness, latency, and token cost.
 
+## Q4: Reciprocal Rank Fusion (RRF)
+
+What is Reciprocal Rank Fusion, and why is it used in hybrid search?
+
+**Answer:**
+- Hybrid search combines dense (semantic/vector) retrieval and sparse (keyword, e.g. BM25) retrieval — each returns its own ranked list of results, but their scores aren't on the same scale (cosine similarity vs. BM25 score), so you can't just add them directly.
+- **RRF** solves this by ignoring raw scores and using **rank position** instead. For each document, its final score is:
+
+  ```
+  score = Σ 1 / (k + rank)
+  ```
+
+  where `rank` is its position in each individual ranked list, and `k` is a constant (commonly 60) that controls how much weight lower-ranked results get. Scores from both lists are summed per document, then re-sorted.
+- **Why it's used:** simple, doesn't need score normalization or tuning of weights between dense/sparse, and works well even when the two retrieval methods have very different score distributions.
+
