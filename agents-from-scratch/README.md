@@ -20,9 +20,11 @@ not per-module — this folder doesn't have its own `requirements.txt`. Code liv
 | File | Topic | Status |
 |---|---|---|
 | `src/1_1_basic_llm_call.py` | Plain LLM call via LangChain | done |
-| `src/2_1_basic_rag.py` | Minimal RAG pipeline (load → split → embed → retrieve → answer) | pending |
-| `src/2_2_rag_with_tool_call.py` | RAG exposed as a tool the LLM decides to call | pending |
-| `src/3_1_react_agent.py` | Single ReAct-style agent with tools (Tavily search) | pending |
+| `src/1_2_structured_output.py` | Force the LLM to return a Pydantic-validated schema instead of free text | done |
+| `src/2_1_basic_rag.py` | Minimal RAG pipeline (load → split → embed → retrieve → answer) | done |
+| `src/2_2_rag_with_tool_call.py` | RAG exposed as a tool the LLM decides to call | done |
+| `src/3_1_react_agent.py` | Single ReAct-style agent with tools (Tavily search) | done |
+| `src/3_2_multi_tool_agent.py` | Agent with 2+ tools (RAG tool + web search), tests tool-selection behavior | done |
 | `src/4_1_supervisor_agent.py` | Supervisor agent routing to worker agents | pending |
 | `src/5_x_scenarios.py` | Grab-bag: memory, human-in-the-loop, structured output, etc. | TBD |
 
