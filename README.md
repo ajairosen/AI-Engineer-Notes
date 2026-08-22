@@ -10,6 +10,7 @@ Q&A bank built up interactively, one question at a time, organized by category.
 - [system-design/questions.md](system-design/questions.md) — System design basics for AI systems
 - [fine-tuning/questions.md](fine-tuning/questions.md) — LoRA/PEFT and other fine-tuning technique questions
 - [llm-fundamentals/questions.md](llm-fundamentals/questions.md) — Core transformer/LLM architecture concepts
+- [agents-from-scratch/](agents-from-scratch/) — hands-on LangChain/LangGraph code (not Q&A): basic LLM call → RAG → RAG+tools → agents → supervisor agent, one script at a time. Own workflow, see its README.
 
 ## Workflow
 - Questions are presented one at a time, shuffled across categories.
