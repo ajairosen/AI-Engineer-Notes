@@ -46,4 +46,5 @@ def rag_node(state:State):
         if isinstance(message, HumanMessage)
     )
     
-        
+if __name__ == "__main__":
+    run()
