@@ -60,12 +60,14 @@ Write a function to check whether two strings are anagrams of each other.
 **Answer:**
 ```python
 def is_anagram(a, b):
-    return "".join(sorted(a)) == "".join(sorted(b))
+    return "".join(sorted(a.lower())) == "".join(sorted(b.lower()))
 
 print(is_anagram("listen", "silent"))    # True
 print(is_anagram("hello", "world"))      # False
+print(is_anagram("abc", "ab"))           # False
+print(is_anagram("", ""))                # True
 ```
-- **Approach:** sort both strings and compare. O(n log n) time; a counting-dict approach gets this to O(n) if asked to optimize.
+- **Approach:** lowercase, sort both strings, compare. O(n log n) time. A length mismatch can never produce equal sorted strings, so it's handled implicitly. `Counter(a.lower()) == Counter(b.lower())` gets this to O(n) if asked to optimize. If the interviewer mentions spaces/punctuation ("dormitory" / "dirty room"), strip non-alphanumerics first.
 
 ## Q5: Remove all spaces from a string
 

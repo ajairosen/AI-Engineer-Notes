@@ -67,7 +67,7 @@ def second_largest(nums):
         if largest is None or num > largest:
             second = largest
             largest = num
-        if num != largest and (second is None or num > second):
+        elif num != largest and (second is None or num > second):
             second = num
     return second
 
@@ -77,7 +77,7 @@ print(second_largest([10]))               # None
 print(second_largest([3, 1, 4, 4, 2]))    # 3
 print(second_largest([-5, -2, -10]))      # -5
 ```
-- **Approach:** single pass tracking both largest and second-largest, handling ties/duplicates by requiring `num != largest`. O(n) time, O(1) space — avoids sorting (O(n log n)).
+- **Approach:** single pass tracking both largest and second-largest, handling ties/duplicates by requiring `num != largest`. O(n) time, O(1) space — avoids sorting (O(n log n)). The second condition is `elif`, not a separate `if`: when the first branch fires, `largest` was just set to `num`, so `num != largest` would always be `False` there anyway.
 
 ## Q4: Most frequent character in a string
 
