@@ -7,12 +7,12 @@ How would you reduce latency in a RAG-based chat system where users complain res
 **Answer:**
 
 *First find the bottleneck*
-- Measure time for each step: embedding → vector search → reranking → prompt creation → LLM.
+- Measure time for each step: embedding → vector search → reranking → LLM.
 
 *Optimize vector search*
 - Use ANN indexes like HNSW/IVF for faster search.
 - Keep `top_k` small — retrieve only the chunks actually needed.
-- Keep the vector DB close to the application to reduce network delay (warn DB + co-located)
+- Keep the vector DB warm and close to the application to reduce network delay (warn DB + co-located)
 
 *Optimize LLM*
 - Use a smaller/faster model for simple queries.
