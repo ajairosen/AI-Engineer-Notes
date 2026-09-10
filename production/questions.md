@@ -74,3 +74,15 @@ How would you safely version and deploy changes to a RAG pipeline in production?
 6. **Monitor production metrics** — track quality, latency, error rates, and user feedback after deployment; compare the new version against the existing stable version.
 7. **Enable quick rollback** — if metrics degrade, immediately route traffic back to the previous version; versioning ensures the old code, prompts, data, and configuration are reproducible.
 
+## Q5: What problem does MLflow solve?
+
+**Answer:**
+
+MLflow solves the problem of experiment tracking and reproducibility in the ML lifecycle. When you're trying multiple algorithms or hyperparameters, it's easy to lose track of which model version used which parameters and how it performed. MLflow logs parameters, metrics like precision/recall, and even the model artifact itself for every run, so you can compare runs side by side and pick the best one. Beyond tracking, it also has a Model Registry, which lets you version models and move them through stages like staging and production, and it supports packaging models in a standard format for deployment.
+
+## Q6: How does an NLI-based faithfulness check detect hallucinations?
+
+**Answer:**
+
+NLI (Natural Language Inference) models classify the relationship between two pieces of text — a premise and a hypothesis — into three categories: entailment (the premise supports the hypothesis), contradiction (the premise contradicts it), or neutral (no clear relationship). To detect hallucination, I treat the retrieved context as the premise and break the LLM's generated response into individual claims or sentences, each treated as a hypothesis. I run each claim through the NLI model against the retrieved context. If a claim is 'entailed,' it's grounded and safe. If it's 'contradicted' or 'neutral' (not supported), it's flagged as a potential hallucination. Aggregating these per-claim results — for example, the percentage of claims that are contradicted or unsupported — gives a final hallucination score for the whole response, which can then trigger guardrails or a retry.
+
