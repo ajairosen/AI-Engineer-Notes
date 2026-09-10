@@ -66,3 +66,14 @@ How would you design the request path to survive a sudden traffic spike into a R
 - **Queue + concurrency limit** — prevents 1,000 requests from simultaneously calling the LLM.
 - **Workers/agent** — process only a controlled number of requests at a time.
 
+## Q3: Routing queries between a small/cheap model and a large/capable one
+
+How would you decide, per request, whether to send a query to a smaller cheaper model or a larger more capable one, so you control cost and latency without hurting answer quality?
+
+**Answer:**
+
+I would use a lightweight routing step before the main LLM call, either a small classifier or a fast LLM call with structured output, that classifies the incoming query as simple or complex based on signals like "does the query need multi-step reasoning", "does the query need multiple sub-queries answered", "how ambiguous or long the query is".
+
+- Simple queries will be routed to a smaller, cheaper, faster model.
+- Complex queries will be routed to a larger, more capable model.
+
