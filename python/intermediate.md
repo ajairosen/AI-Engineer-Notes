@@ -357,3 +357,24 @@ print(is_balanced("((("))           # False
 print(is_balanced(""))              # True
 ```
 - **Approach:** stack-based matching. Push every opener. On a closer, either the stack is empty (unmatched closer, e.g. leading `)`) or the popped top isn't its expected opener (wrong type or interleaved brackets, e.g. `([)]`) — both return `False` immediately. After the loop, `len(stack) == 0` catches unclosed openers (e.g. `"((("`). O(n) time, O(n) space (worst case: all openers).
+
+## Q18: Maximum subarray sum (Kadane's algorithm)
+
+Given a list of integers (can include negatives), return the largest sum obtainable from a contiguous non-empty subarray.
+
+**Answer:**
+```python
+def max_subarray(nums):
+    current_sum = nums[0]
+    max_sum = nums[0]
+    for num in nums[1:]:
+        current_sum = max(num, current_sum + num)
+        max_sum = max(max_sum, current_sum)
+    return max_sum
+
+print(max_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))   # 6   ([4, -1, 2, 1])
+print(max_subarray([-1, -2, -3]))                       # -1
+print(max_subarray([5, 4, -1, 7, 8]))                   # 23
+print(max_subarray([3]))                                # 3
+```
+- **Approach:** Kadane's. `current_sum = max(num, current_sum + num)` — at each element, either extend the running subarray or start fresh at `num`. Initializing both to `nums[0]` and iterating from `nums[1:]` handles the all-negative case (returns the least-bad single element). O(n) time, O(1) space. To also return the subarray itself, track a `start` pointer that resets when you start fresh, plus `best_start`/`best_end`.
